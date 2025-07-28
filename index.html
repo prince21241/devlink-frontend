@@ -1,13 +1,29 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/devlink-art.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+    <title>DevLink</title>
+
+    <!--  Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Enable Tailwind Dark Mode -->
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {},
+        },
+        plugins: [],
+      };
+    </script>
   </head>
-  <body>
+  <body class="transition-colors duration-300">
     <div id="root"></div>
+
+    <!--  Main JS Entry -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
