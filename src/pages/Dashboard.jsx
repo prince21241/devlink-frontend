@@ -36,9 +36,9 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col">
       {/* Top Navigation */}
-      <header className="bg-white shadow px-6 py-4 flex items-center justify-between">
+      <header className="bg-white shadow px-4 sm:px-6 py-4 flex items-center justify-between">
         <h1 className="text-xl font-bold">DevLink</h1>
-        <h2 className="text-lg font-semibold">
+        <h2 className="text-lg font-semibold hidden sm:block">
           {user ? `Welcome, ${user.name}!` : "Welcome!"}
         </h2>
         <div className="flex items-center gap-4 text-sm">
@@ -54,23 +54,20 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <div className="flex flex-1">
+      {/* Layout Container */}
+      <div className="flex flex-col lg:flex-row flex-1">
         {/* Sidebar */}
-        <aside className="w-64 bg-white border-r p-4">
-          <div className="text-center">
-            <img
-              src="https://i.pravatar.cc/100"
-              alt="Avatar"
-              className="w-24 h-24 rounded-full mx-auto"
-            />
-            <h3 className="text-lg font-semibold mt-2">
-              {user?.name || "..."}
-            </h3>
-            <p className="text-sm text-gray-500">Full Stack Developer</p>
-            <a href="#" className="text-blue-600 text-sm mt-1 inline-block">
-              Edit Profile
-            </a>
-          </div>
+        <aside className="w-full lg:w-64 bg-white border-b lg:border-b-0 lg:border-r p-6 text-center lg:text-left">
+          <img
+            src="https://i.pravatar.cc/100"
+            alt="Avatar"
+            className="w-24 h-24 rounded-full mx-auto lg:mx-0"
+          />
+          <h3 className="text-lg font-semibold mt-2">{user?.name || "..."}</h3>
+          <p className="text-sm text-gray-500">Full Stack Developer</p>
+          <a href="#" className="text-blue-600 text-sm mt-1 inline-block">
+            Edit Profile
+          </a>
 
           <nav className="mt-6 space-y-2">
             {[
@@ -93,12 +90,12 @@ export default function Dashboard() {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
-          <h2 className="text-xl font-bold mb-4">Recent Posts</h2>
+        <main className="flex-1 p-4 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-bold mb-4">Recent Posts</h2>
 
           <input
             placeholder="Share a post..."
-            className="w-full px-4 py-2 border border-gray-300 rounded mb-6"
+            className="w-full px-4 py-2 border border-gray-300 rounded mb-6 text-sm sm:text-base"
           />
 
           <div className="space-y-4">
