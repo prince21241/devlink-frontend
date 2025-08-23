@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import API from "../../api/axios";
 import EditProfile from "./EditProfile";
+import { buildImageURL } from "../../utils/imageUtils";
 
 export default function ViewProfile({ onProfileUpdate }) {
   const [profile, setProfile] = useState(null);
   const [user, setUser] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [hasProfile, setHasProfile] = useState(true);
@@ -29,6 +32,24 @@ export default function ViewProfile({ onProfileUpdate }) {
           } else {
             setError("Error fetching profile");
           }
+        }
+
+        // Fetch user's featured projects
+        try {
+          const projectsRes = await API.get("/api/projects/me");
+          setProjects(projectsRes.data.filter(project => project.featured).slice(0, 3));
+        } catch (projectsErr) {
+          // Projects are optional, so don't set error
+          console.log("No projects found or error fetching projects");
+        }
+
+        // Fetch user's featured skills
+        try {
+          const skillsRes = await API.get("/api/skills/me");
+          setSkills(skillsRes.data.filter(skill => skill.featured).slice(0, 6));
+        } catch (skillsErr) {
+          // Skills are optional, so don't set error
+          console.log("No skills found or error fetching skills");
         }
       } catch (err) {
         setError("Error fetching user data");
@@ -63,6 +84,21 @@ export default function ViewProfile({ onProfileUpdate }) {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getProficiencyColor = (proficiency) => {
+    switch (proficiency) {
+      case "Beginner":
+        return "bg-red-100 text-red-800";
+      case "Intermediate":
+        return "bg-yellow-100 text-yellow-800";
+      case "Advanced":
+        return "bg-blue-100 text-blue-800";
+      case "Expert":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -149,10 +185,10 @@ export default function ViewProfile({ onProfileUpdate }) {
         </div>
       </div>
 
-      {/* Skills Section */}
+      {/* Skills Section from Profile */}
       {profile?.skills && profile.skills.length > 0 && (
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Skills</h2>
+          <h2 className="text-xl font-semibold mb-4">Skills Overview</h2>
           <div className="flex flex-wrap gap-2">
             {profile.skills.map((skill, index) => (
               <span
@@ -161,6 +197,43 @@ export default function ViewProfile({ onProfileUpdate }) {
               >
                 {skill}
               </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Featured Skills Section */}
+      {skills && skills.length > 0 && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold mb-4">Featured Skills</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {skills.map((skill) => (
+              <div key={skill._id} className="border rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-semibold text-gray-900">{skill.name}</h3>
+                  <span className="text-xs text-gray-500">{skill.category}</span>
+                </div>
+                <div className="mb-2">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getProficiencyColor(skill.proficiency)}`}>
+                    {skill.proficiency}
+                  </span>
+                </div>
+                {skill.yearsOfExperience > 0 && (
+                  <div className="text-xs text-gray-500 mb-2">
+                    {skill.yearsOfExperience} year{skill.yearsOfExperience !== 1 ? 's' : ''} experience
+                  </div>
+                )}
+                {skill.description && (
+                  <p className="text-sm text-gray-600 line-clamp-2">
+                    {skill.description}
+                  </p>
+                )}
+                {skill.endorsements && skill.endorsements.length > 0 && (
+                  <div className="text-xs text-blue-600 mt-2">
+                    {skill.endorsements.length} endorsement{skill.endorsements.length !== 1 ? 's' : ''}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         </div>
@@ -255,6 +328,73 @@ export default function ViewProfile({ onProfileUpdate }) {
                 🐦 Twitter
               </a>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Featured Projects Section */}
+      {projects && projects.length > 0 && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold mb-4">Featured Projects</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {projects.map((project) => (
+              <div key={project._id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                {project.projectImage && (
+                  <div className="h-32 mb-3 overflow-hidden rounded">
+                    <img
+                      src={buildImageURL(project.projectImage)}
+                      alt={project.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
+                <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                  {project.description}
+                </p>
+                {project.technologies && project.technologies.length > 0 && (
+                  <div className="mb-3">
+                    <div className="flex flex-wrap gap-1">
+                      {project.technologies.slice(0, 3).map((tech, index) => (
+                        <span
+                          key={index}
+                          className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                      {project.technologies.length > 3 && (
+                        <span className="text-xs text-gray-500 self-center">
+                          +{project.technologies.length - 3}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+                <div className="flex gap-2">
+                  {project.liveUrl && (
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:text-blue-700 text-xs font-medium"
+                    >
+                      🔗 Live
+                    </a>
+                  )}
+                  {project.githubUrl && (
+                    <a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-700 hover:text-gray-900 text-xs font-medium"
+                    >
+                      🐙 Code
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}

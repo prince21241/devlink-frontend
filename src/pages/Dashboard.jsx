@@ -2,6 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import ViewProfile from "./Profile/ViewProfile";
+import Connections from "./Connections/Connections";
+import ExploreDevelopers from "./Explore/ExploreDevelopers";
+import Projects from "./Projects/Projects";
+import Skills from "./Skills/Skills";
+import Feed from "./Feed/Feed";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -58,26 +63,11 @@ export default function Dashboard() {
       case "profile":
         return <ViewProfile onProfileUpdate={refreshProfile} />;
       case "connections":
-        return (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-bold mb-4">Connections</h2>
-            <p className="text-gray-600">Coming soon...</p>
-          </div>
-        );
+        return <Connections />;
       case "projects":
-        return (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-bold mb-4">Projects</h2>
-            <p className="text-gray-600">Coming soon...</p>
-          </div>
-        );
+        return <Projects />;
       case "skills":
-        return (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-bold mb-4">Skills</h2>
-            <p className="text-gray-600">Coming soon...</p>
-          </div>
-        );
+        return <Skills />;
       case "saved":
         return (
           <div className="bg-white rounded-lg shadow p-6">
@@ -86,35 +76,10 @@ export default function Dashboard() {
           </div>
         );
       case "explore":
-        return (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-bold mb-4">Explore Developers</h2>
-            <p className="text-gray-600">Coming soon...</p>
-          </div>
-        );
+        return <ExploreDevelopers />;
       case "feed":
       default:
-        return (
-          <div>
-            <h2 className="text-lg sm:text-xl font-bold mb-4">Recent Posts</h2>
-            <input
-              placeholder="Share a post..."
-              className="w-full px-4 py-2 border border-gray-300 rounded mb-6 text-sm sm:text-base"
-            />
-            <div className="space-y-4">
-              <PostCard
-                name={user?.name || "You"}
-                text="Just deployed my new portfolio site! 🚀"
-                profilePicture={profile?.profilePicture}
-              />
-              <PostCard
-                name={user?.name || "You"}
-                text="Started learning TypeScript. Excited to dive in!"
-                profilePicture={profile?.profilePicture}
-              />
-            </div>
-          </div>
-        );
+        return <Feed />;
     }
   };
 
@@ -189,26 +154,6 @@ export default function Dashboard() {
           {renderMainContent()}
         </main>
       </div>
-    </div>
-  );
-}
-
-// Post card component
-function PostCard({ name, text, profilePicture }) {
-  return (
-    <div className="bg-white shadow rounded p-4">
-      <div className="flex items-center gap-3 mb-2">
-        <img
-          src={profilePicture || "https://i.pravatar.cc/40"}
-          className="w-10 h-10 rounded-full object-cover"
-          alt="User"
-        />
-        <div>
-          <p className="font-semibold">{name}</p>
-          <p className="text-xs text-gray-500">Just now</p>
-        </div>
-      </div>
-      <p>{text}</p>
     </div>
   );
 }
