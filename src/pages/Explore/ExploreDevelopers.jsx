@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import API from "../../api/axios";
+import { getAvatarWithInitials } from "../../utils/defaultAvatar";
+import { RefreshIcon } from "../../components/Icons/Icons";
+import { useToast } from "../../components/Toast/Toast";
 
 export default function ExploreDevelopers() {
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [sendingRequests, setSendingRequests] = useState({});
+  const { addToast } = useToast();
 
   useEffect(() => {
     fetchSuggestions();
@@ -33,10 +37,10 @@ export default function ExploreDevelopers() {
       // Remove the user from suggestions since request was sent
       setSuggestions(prev => prev.filter(user => user._id !== userId));
       
-      alert("Connection request sent successfully!");
+      addToast("Connection request sent successfully!", "success");
     } catch (err) {
       const errorMsg = err.response?.data?.msg || "Error sending connection request";
-      alert(errorMsg);
+      addToast(errorMsg, "error");
       console.error(err);
     } finally {
       setSendingRequests(prev => ({ ...prev, [userId]: false }));
@@ -74,9 +78,10 @@ export default function ExploreDevelopers() {
           <h2 className="text-2xl font-bold">Explore Developers</h2>
           <button
             onClick={fetchSuggestions}
-            className="bg-gray-100 text-gray-600 px-4 py-2 rounded hover:bg-gray-200 text-sm"
+            className="bg-gray-100 text-gray-600 px-4 py-2 rounded hover:bg-gray-200 text-sm flex items-center space-x-2 transition-colors"
           >
-            🔄 Refresh
+            <RefreshIcon className="w-4 h-4" />
+            <span>Refresh</span>
           </button>
         </div>
 
@@ -109,7 +114,7 @@ function DeveloperCard({ user, onSendRequest, isSending }) {
     <div className="border rounded-lg p-6 hover:shadow-lg transition-shadow bg-white">
       <div className="text-center">
         <img
-          src={user.profilePicture || "https://i.pravatar.cc/100"}
+          src={getAvatarWithInitials(user.name, user.profilePicture)}
           alt={user.name}
           className="w-20 h-20 rounded-full mx-auto object-cover border-4 border-blue-100"
         />
@@ -163,3 +168,4 @@ function DeveloperCard({ user, onSendRequest, isSending }) {
     </div>
   );
 }
+

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import API from "../../api/axios";
 import EditProfile from "./EditProfile";
 import { buildImageURL } from "../../utils/imageUtils";
+import { getAvatarWithInitials } from "../../utils/defaultAvatar";
 
 export default function ViewProfile({ onProfileUpdate }) {
   const [profile, setProfile] = useState(null);
@@ -158,7 +159,7 @@ export default function ViewProfile({ onProfileUpdate }) {
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
           <img
-            src={profile?.profilePicture || "https://i.pravatar.cc/150"}
+            src={getAvatarWithInitials(user?.name, profile?.profilePicture)}
             alt="Profile"
             className="w-32 h-32 rounded-full object-cover border-4 border-blue-100"
           />
