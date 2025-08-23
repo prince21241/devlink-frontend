@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import API from "../../api/axios";
+import { getAvatarWithInitials } from "../../utils/defaultAvatar";
 
 export default function Connections() {
   const [activeTab, setActiveTab] = useState("connections");
@@ -159,7 +160,7 @@ function ConnectionsList({ connections, onRemove }) {
         <div key={connection._id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
           <div className="flex items-center space-x-3">
             <img
-              src={connection.user.profilePicture || "https://i.pravatar.cc/60"}
+              src={getAvatarWithInitials(connection.user.name, connection.user.profilePicture)}
               alt={connection.user.name}
               className="w-12 h-12 rounded-full object-cover"
             />
@@ -232,7 +233,7 @@ function ReceivedRequestsList({ requests, onAccept, onReject }) {
         <div key={request._id} className="border rounded-lg p-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <img
-              src={request.requester.profilePicture || "https://i.pravatar.cc/50"}
+              src={getAvatarWithInitials(request.requester.name, request.requester.profilePicture)}
               alt={request.requester.name}
               className="w-12 h-12 rounded-full object-cover"
             />
@@ -281,7 +282,7 @@ function SentRequestsList({ requests }) {
         <div key={request._id} className="border rounded-lg p-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <img
-              src={request.recipient.profilePicture || "https://i.pravatar.cc/50"}
+              src={getAvatarWithInitials(request.recipient.name, request.recipient.profilePicture)}
               alt={request.recipient.name}
               className="w-12 h-12 rounded-full object-cover"
             />

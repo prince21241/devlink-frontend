@@ -2,6 +2,21 @@ import React, { useEffect, useState } from "react";
 import API from "../../api/axios";
 import PostForm from "./PostForm";
 import { buildImageURL } from "../../utils/imageUtils";
+import { getAvatarWithInitials } from "../../utils/defaultAvatar";
+import { HeartIcon, HeartOutlineIcon, CommentIcon, ShareIcon, MoreIcon } from "../../components/Icons/Icons";
+
+// Globe and Lock icons for visibility
+const GlobeIcon = ({ className = "w-4 h-4" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+  </svg>
+);
+
+const LockIcon = ({ className = "w-4 h-4" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+  </svg>
+);
 
 export default function Feed() {
   const [posts, setPosts] = useState([]);
@@ -140,7 +155,7 @@ export default function Feed() {
             className="flex items-center space-x-3 cursor-pointer"
           >
             <img
-              src={buildImageURL(currentUser?.profilePicture) || "https://i.pravatar.cc/40"}
+              src={buildImageURL(currentUser?.profilePicture) || getAvatarWithInitials(currentUser?.name)}
               alt="Your avatar"
               className="w-10 h-10 rounded-full object-cover"
             />
@@ -238,7 +253,7 @@ function PostCard({ post, onLike, onComment, onDelete, currentUser }) {
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">
             <img
-              src={buildImageURL(post.user.profilePicture) || "https://i.pravatar.cc/40"}
+              src={buildImageURL(post.user.profilePicture) || getAvatarWithInitials(post.user.name)}
               alt={post.user.name}
               className="w-10 h-10 rounded-full object-cover"
             />
@@ -321,22 +336,36 @@ function PostCard({ post, onLike, onComment, onDelete, currentUser }) {
             <button
               onClick={() => onLike(post._id)}
               className={`flex items-center space-x-2 text-sm font-medium transition-colors ${
-                isLiked ? "text-blue-600" : "text-gray-500 hover:text-blue-600"
+                isLiked ? "text-red-600" : "text-gray-500 hover:text-red-600"
               }`}
             >
-              <span>{isLiked ? "👍" : "👍"}</span>
+              {isLiked ? (
+                <HeartIcon className="w-5 h-5" />
+              ) : (
+                <HeartOutlineIcon className="w-5 h-5" />
+              )}
               <span>Like ({post.likeCount || 0})</span>
             </button>
             <button
               onClick={() => setShowComments(!showComments)}
               className="flex items-center space-x-2 text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors"
             >
-              <span>💬</span>
+              <CommentIcon className="w-5 h-5" />
               <span>Comment ({post.commentCount || 0})</span>
             </button>
           </div>
-          <div className="text-sm text-gray-500">
-            {post.visibility === "public" ? "🌍 Public" : "🔒 Private"}
+          <div className="flex items-center space-x-1 text-sm text-gray-500">
+            {post.visibility === "public" ? (
+              <>
+                <GlobeIcon className="w-4 h-4" />
+                <span>Public</span>
+              </>
+            ) : (
+              <>
+                <LockIcon className="w-4 h-4" />
+                <span>Private</span>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -348,7 +377,7 @@ function PostCard({ post, onLike, onComment, onDelete, currentUser }) {
           <form onSubmit={handleCommentSubmit} className="p-4 border-b border-gray-100">
             <div className="flex space-x-3">
               <img
-                src={buildImageURL(currentUser?.profilePicture) || "https://i.pravatar.cc/32"}
+                src={buildImageURL(currentUser?.profilePicture) || getAvatarWithInitials(currentUser?.name)}
                 alt="Your avatar"
                 className="w-8 h-8 rounded-full object-cover"
               />
@@ -384,7 +413,7 @@ function PostCard({ post, onLike, onComment, onDelete, currentUser }) {
                 <div key={comment._id} className="p-4 border-b border-gray-50 last:border-b-0">
                   <div className="flex space-x-3">
                     <img
-                      src={buildImageURL(comment.user.profilePicture) || "https://i.pravatar.cc/32"}
+                      src={buildImageURL(comment.user.profilePicture) || getAvatarWithInitials(comment.user.name)}
                       alt={comment.user.name}
                       className="w-8 h-8 rounded-full object-cover"
                     />

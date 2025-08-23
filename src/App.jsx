@@ -6,21 +6,24 @@ import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import Home from "./pages/Home/Home";
 import Footer from "./pages/Footer/Footer";
+import { ToastProvider } from "./components/Toast/Toast";
 
 export default function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col">
-        <div className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-          </Routes>
+    <ToastProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col">
+          <div className="flex-grow">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Routes>
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
-    </Router>
+      </Router>
+    </ToastProvider>
   );
 }

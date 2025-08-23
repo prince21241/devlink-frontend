@@ -7,12 +7,19 @@ import ExploreDevelopers from "./Explore/ExploreDevelopers";
 import Projects from "./Projects/Projects";
 import Skills from "./Skills/Skills";
 import Feed from "./Feed/Feed";
+import Notifications from "./Notifications/Notifications";
+import Search from "./Search/Search";
+import { getAvatarWithInitials } from "../utils/defaultAvatar";
+import { BellIcon, SearchIcon } from "../components/Icons/Icons";
+import { useToast } from "../components/Toast/Toast";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [activeView, setActiveView] = useState("feed");
+  const [notificationCount, setNotificationCount] = useState(0);
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   // Fetch user and profile on load
   useEffect(() => {
@@ -30,6 +37,9 @@ export default function Dashboard() {
           // If no profile exists, that's okay - we'll use default avatar
           console.log("No profile found, using default avatar");
         }
+
+        // Fetch notification count
+        fetchNotificationCount();
       } catch (err) {
         console.error("Error fetching user", err);
         navigate("/login"); // redirect if token is invalid
@@ -39,10 +49,29 @@ export default function Dashboard() {
     fetchUserData();
   }, [navigate]);
 
+  // Fetch notification count
+  const fetchNotificationCount = async () => {
+    try {
+      const res = await API.get("/api/notifications/unread-count");
+      setNotificationCount(res.data?.count || 0);
+    } catch (err) {
+      console.error("Error fetching notification count:", err);
+      // Set count to 0 on error to avoid UI issues
+      setNotificationCount(0);
+    }
+  };
+
+  // Refresh notification count when switching views
+  useEffect(() => {
+    if (activeView === "notifications") {
+      fetchNotificationCount();
+    }
+  }, [activeView]);
+
   // Handle logout
   const handleLogout = () => {
     localStorage.removeItem("token");
-    alert("You have been logged out.");
+    addToast("You have been logged out successfully", "success", 3000);
     navigate("/");
   };
 
@@ -77,6 +106,10 @@ export default function Dashboard() {
         );
       case "explore":
         return <ExploreDevelopers />;
+      case "notifications":
+        return <Notifications />;
+      case "search":
+        return <Search />;
       case "feed":
       default:
         return <Feed />;
@@ -92,8 +125,25 @@ export default function Dashboard() {
           {user ? `Welcome, ${user.name}!` : "Welcome!"}
         </h2>
         <div className="flex items-center gap-4 text-sm">
-          <button title="Search">🔍</button>
-          <button title="Notifications">🔔</button>
+          <button 
+            onClick={() => setActiveView("search")}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            title="Search"
+          >
+            <SearchIcon className="w-5 h-5 text-gray-600 hover:text-blue-600" />
+          </button>
+          <button 
+            onClick={() => setActiveView("notifications")}
+            className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+            title="Notifications"
+          >
+            <BellIcon className="w-5 h-5 text-gray-600 hover:text-blue-600" />
+            {notificationCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {notificationCount > 9 ? '9+' : notificationCount}
+              </span>
+            )}
+          </button>
           <button
             onClick={handleLogout}
             className="text-red-500 font-semibold hover:underline"
@@ -109,7 +159,7 @@ export default function Dashboard() {
         {/* Sidebar */}
         <aside className="w-full lg:w-64 bg-white border-b lg:border-b-0 lg:border-r p-6 text-center lg:text-left">
           <img
-            src={profile?.profilePicture || "https://i.pravatar.cc/100"}
+            src={getAvatarWithInitials(user?.name, profile?.profilePicture)}
             alt="Profile"
             className="w-24 h-24 rounded-full mx-auto lg:mx-0 object-cover border-2 border-gray-200"
           />
@@ -127,10 +177,12 @@ export default function Dashboard() {
           <nav className="mt-6 space-y-2">
             {[
               { label: "Feed", key: "feed" },
+              { label: "Search", key: "search" },
               { label: "My Profile", key: "profile" },
               { label: "Connections", key: "connections" },
               { label: "Projects", key: "projects" },
               { label: "Skills", key: "skills" },
+              { label: "Notifications", key: "notifications", count: notificationCount },
               { label: "Saved Posts", key: "saved" },
               { label: "Explore Developers", key: "explore" },
             ].map((item) => (
@@ -143,7 +195,14 @@ export default function Dashboard() {
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
-                {item.label}
+                <div className="flex items-center justify-between">
+                  <span>{item.label}</span>
+                  {item.count > 0 && (
+                    <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {item.count > 9 ? '9+' : item.count}
+                    </span>
+                  )}
+                </div>
               </button>
             ))}
           </nav>
