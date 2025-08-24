@@ -26,4 +26,4 @@ export default function App() {
       </Router>
     </ToastProvider>
   );
-}
+} 
