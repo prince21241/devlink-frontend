@@ -244,23 +244,6 @@ export default function Home() {
           </div>
         </section>
       </div>
-
-      {/* About */}
-      <section id="about" className="relative z-10 py-16">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/60 p-8 flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center shadow text-white">
-              <CodeIcon className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">About</h3>
-              <p className="text-gray-700 leading-relaxed">
-                DevLink is a community-driven developer network platform, proudly created by <span className="font-semibold">Prince Raval</span>.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
     </>
   );
 }
