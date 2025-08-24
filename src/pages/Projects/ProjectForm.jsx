@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import API from "../../api/axios";
-import { buildImageURL } from "../../utils/imageUtils";
 
 export default function ProjectForm({ project, onSubmit, onCancel }) {
   const [formData, setFormData] = useState({
@@ -15,9 +14,6 @@ export default function ProjectForm({ project, onSubmit, onCancel }) {
     startDate: "",
     endDate: "",
   });
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState("");
-  const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -37,11 +33,6 @@ export default function ProjectForm({ project, onSubmit, onCancel }) {
         startDate: project.startDate ? project.startDate.split('T')[0] : "",
         endDate: project.endDate ? project.endDate.split('T')[0] : "",
       });
-      
-      // Set image preview if project has an image
-      if (project.projectImage) {
-        setImagePreview(buildImageURL(project.projectImage));
-      }
     }
   }, [project]);
 
@@ -51,71 +42,6 @@ export default function ProjectForm({ project, onSubmit, onCancel }) {
       ...prev,
       [name]: type === "checkbox" ? checked : value
     }));
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setError('Please select an image file');
-        return;
-      }
-      
-      // Validate file size (5MB limit)
-      if (file.size > 5 * 1024 * 1024) {
-        setError('File size must be less than 5MB');
-        return;
-      }
-      
-      setSelectedFile(file);
-      setError('');
-      
-      // Create preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleRemoveImage = async () => {
-    // If there's an existing project image, try to delete it from server
-    if (project && project.projectImage && project.projectImage.startsWith('/uploads/')) {
-      try {
-        const filename = project.projectImage.split('/').pop();
-        await API.delete(`/api/upload/project-image/${filename}`);
-      } catch (err) {
-        console.log('Error deleting old image:', err);
-      }
-    }
-    
-    setSelectedFile(null);
-    setImagePreview('');
-    setFormData(prev => ({ ...prev, projectImage: '' }));
-  };
-
-  const uploadImage = async () => {
-    if (!selectedFile) return null;
-    
-    setUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append('projectImage', selectedFile);
-      
-      const response = await API.post('/api/upload/project-image', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      
-      return response.data.imageUrl;
-    } catch (err) {
-      throw new Error(err.response?.data?.msg || 'Error uploading image');
-    } finally {
-      setUploading(false);
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -131,16 +57,8 @@ export default function ProjectForm({ project, onSubmit, onCancel }) {
     }
 
     try {
-      let imageUrl = formData.projectImage;
-      
-      // Upload new image if selected
-      if (selectedFile) {
-        imageUrl = await uploadImage();
-      }
-
       const projectData = {
         ...formData,
-        projectImage: imageUrl,
         technologies: formData.technologies.split(",").map(tech => tech.trim()).filter(tech => tech),
       };
 
@@ -267,44 +185,20 @@ export default function ProjectForm({ project, onSubmit, onCancel }) {
           <div className="space-y-4">
             <div>
               <label htmlFor="projectImage" className="block text-sm font-medium text-gray-700 mb-2">
-                Project Screenshot
+                Project Image URL
               </label>
-              
-              {/* Image Preview */}
-              {imagePreview && (
-                <div className="mb-4">
-                  <div className="relative inline-block">
-                    <img
-                      src={imagePreview}
-                      alt="Project preview"
-                      className="w-48 h-32 object-cover rounded-md border border-gray-300"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleRemoveImage}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
-                    >
-                      ×
-                    </button>
-                  </div>
-                </div>
-              )}
-              
-              {/* File Input */}
               <input
-                type="file"
+                type="url"
                 id="projectImage"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                name="projectImage"
+                value={formData.projectImage}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="https://example.com/project-image.jpg"
               />
               <p className="text-sm text-gray-500 mt-1">
-                Upload a screenshot or preview image of your project (Max 5MB, JPG/PNG/GIF)
+                Enter the URL of your project screenshot or preview image
               </p>
-              
-              {uploading && (
-                <p className="text-sm text-blue-600 mt-2">Uploading image...</p>
-              )}
             </div>
 
             <div>
@@ -377,14 +271,14 @@ export default function ProjectForm({ project, onSubmit, onCancel }) {
         <div className="flex gap-4 pt-6 border-t border-gray-200">
           <button
             type="submit"
-            disabled={loading || uploading}
+            disabled={loading}
             className={`px-6 py-2 rounded-md text-white font-medium ${
-              loading || uploading
+              loading
                 ? "bg-blue-400 cursor-not-allowed"
                 : "bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             }`}
           >
-            {uploading ? "Uploading..." : loading ? "Saving..." : project ? "Update Project" : "Add Project"}
+            {loading ? "Saving..." : project ? "Update Project" : "Add Project"}
           </button>
           
           <button
