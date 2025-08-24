@@ -34,9 +34,30 @@ export default function Login() {
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000"></div>
       </div>
 
-      <div className="relative z-10 flex items-center justify-center min-h-screen px-4 py-12">
-        {/* Auth form only */}
-        <div className="max-w-md w-full">
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center min-h-screen px-4 py-12 max-w-6xl mx-auto">
+        {/* Left brand/illustration */}
+        <div className="hidden lg:flex flex-col space-y-6 p-8">
+          <h1 className="text-4xl font-extrabold leading-tight">
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Welcome back to DevLink</span>
+          </h1>
+          <p className="text-gray-600 text-lg">Your developer community to connect, collaborate, and grow your career.</p>
+          <div className="rounded-3xl border border-white/40 bg-white/30 backdrop-blur-md p-6 shadow-xl">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                  <path d="M12 12c2.76 0 5-2.24 5-5S14.76 2 12 2 7 4.24 7 7s2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/>
+                </svg>
+              </div>
+              <div>
+                <div className="font-semibold text-gray-900">Vibrant Community</div>
+                <div className="text-sm text-gray-600">Meet developers worldwide</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right form */}
+        <div className="max-w-md w-full lg:ml-auto">
           {/* Header */}
           <div className="text-center mb-8">
             <Link to="/" className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
