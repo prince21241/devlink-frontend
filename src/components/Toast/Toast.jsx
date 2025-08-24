@@ -38,7 +38,7 @@ function ToastContainer({ toasts, onRemove }) {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-2">
+    <div className="fixed top-4 right-4 z-50 space-y-2 max-w-md w-full">
       {toasts.map(toast => (
         <ToastItem 
           key={toast.id} 
@@ -97,24 +97,24 @@ function ToastItem({ toast, onRemove }) {
       className={`
         transform transition-all duration-300 ease-in-out
         ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}
-        max-w-sm w-full bg-white rounded-lg shadow-lg border-l-4 ${getToastStyles()}
-        pointer-events-auto
+        w-full bg-white rounded-lg shadow-lg border-l-4 ${getToastStyles()}
+        pointer-events-auto min-w-0
       `}
     >
       <div className="p-4">
-        <div className="flex items-start">
-          <div className="flex-shrink-0">
+        <div className="flex items-start gap-3">
+          <div className="flex-shrink-0 pt-0.5">
             {getIcon()}
           </div>
-          <div className="ml-3 w-0 flex-1">
-            <p className="text-sm font-medium text-gray-900">
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900 break-words leading-5">
               {toast.message}
             </p>
           </div>
-          <div className="ml-4 flex-shrink-0 flex">
+          <div className="flex-shrink-0">
             <button
               onClick={handleRemove}
-              className="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 p-1"
             >
               <span className="sr-only">Close</span>
               <CloseIcon className="w-4 h-4" />
