@@ -75,20 +75,20 @@ export default function Home() {
             <div className="lg:w-1/2 text-center lg:text-left space-y-8">
               <div className="space-y-6">
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
-                  <span className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 bg-clip-text text-transparent drop-shadow-lg">
+                  <span className="text-blue-700 bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 bg-clip-text text drop-shadow-lg">
                     Connect.
                   </span>
                   <br />
-                  <span className="bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text text-transparent">
+                  <span className="text-blue-700 bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text">
                     Code.
                   </span>
                   <br />
-                  <span className="bg-gradient-to-r from-sky-500 to-cyan-400 bg-clip-text text-transparent">
+                  <span className="text-blue-700 bg-gradient-to-r from-sky-500 to-cyan-400 bg-clip-text">
                     Collaborate.
                   </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-gray-600 leading-relaxed max-w-2xl">
+                <p className="text-xl md:text-2xl text-grey-600 leading-relaxed max-w-2xl">
                   Join the most vibrant developer community. Share knowledge,
                   build connections, and accelerate your career.
                 </p>
