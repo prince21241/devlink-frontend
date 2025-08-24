@@ -1,8 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import API from "../../api/axios";
 import { getAvatarWithInitials } from "../../utils/defaultAvatar";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function Messages() {
+	const { user } = useContext(AuthContext);
 	const [conversations, setConversations] = useState([]);
 	const [selectedConversation, setSelectedConversation] = useState(null);
 	const [messages, setMessages] = useState([]);
@@ -150,21 +152,27 @@ export default function Messages() {
 						<button
 							key={c._id}
 							onClick={() => setSelectedConversation(c)}
-							className={`w-full text-left p-3 rounded hover:bg-gray-100 transition ${
+							className={`w-full text-left p-3 rounded hover:bg-gray-100 transition flex items-center gap-3 ${
 								selectedConversation?._id === c._id ? "bg-blue-50" : ""
 							}`}
 						>
-							<div className="flex items-center gap-3">
-								<img
-									src={getAvatarWithInitials(c.otherUser?.name, c.otherUser?.profilePicture)}
-									alt={c.otherUser?.name}
-									className="w-10 h-10 rounded-full object-cover border"
-								/>
-								<div>
-									<div className="font-medium">{c.otherUser?.name || "Unknown"}</div>
-									<div className="text-sm text-gray-500 truncate">{c.lastMessage || "Start chatting"}</div>
+							<img
+								src={getAvatarWithInitials(c.otherUser?.name, c.otherUser?.profilePicture)}
+								alt={c.otherUser?.name}
+								className="w-10 h-10 rounded-full object-cover border"
+							/>
+							<div className="flex-1 min-w-0">
+								<div className="flex items-center justify-between">
+									<div className="font-medium truncate">{c.otherUser?.name || "Unknown"}</div>
+									<div className="text-xs text-gray-400 ml-2 truncate">{c.lastMessageAt ? new Date(c.lastMessageAt).toLocaleString() : ""}</div>
 								</div>
+								<div className="text-sm text-gray-500 truncate">{c.lastMessage || "Start chatting"}</div>
 							</div>
+							{c.unreadCount > 0 && (
+								<span className="ml-2 bg-blue-600 text-white text-xs rounded-full h-5 min-w-[1.25rem] px-1 flex items-center justify-center">
+									{c.unreadCount}
+								</span>
+							)}
 						</button>
 					))}
 				</div>
@@ -187,7 +195,13 @@ export default function Messages() {
 									: "ml-auto bg-blue-600 text-white"
 							}`}
 						>
-							{m.text}
+							<div className="text-sm whitespace-pre-wrap">{m.text}</div>
+							<div className={`mt-1 text-[10px] ${m.sender === selectedConversation.otherUser?._id ? "text-gray-400" : "text-blue-100"}`}>
+								{new Date(m.createdAt).toLocaleString()}
+								{m.sender !== selectedConversation.otherUser?._id && (
+									<span className="ml-2">{m.isRead ? "Read" : "Sent"}</span>
+								)}
+							</div>
 						</div>
 					))}
 					<div ref={bottomRef} />
