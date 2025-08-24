@@ -8,9 +8,10 @@ import Projects from "./Projects/Projects";
 import Skills from "./Skills/Skills";
 import Feed from "./Feed/Feed";
 import Notifications from "./Notifications/Notifications";
+import Messages from "./Messages/Messages";
 import Search from "./Search/Search";
 import { getAvatarWithInitials } from "../utils/defaultAvatar";
-import { BellIcon, SearchIcon } from "../components/Icons/Icons";
+import { BellIcon, SearchIcon, MailIcon } from "../components/Icons/Icons";
 import { useToast } from "../components/Toast/Toast";
 
 export default function Dashboard() {
@@ -108,6 +109,8 @@ export default function Dashboard() {
         return <ExploreDevelopers />;
       case "notifications":
         return <Notifications />;
+      case "messages":
+        return <Messages />;
       case "search":
         return <Search />;
       case "feed":
@@ -131,6 +134,13 @@ export default function Dashboard() {
             title="Search"
           >
             <SearchIcon className="w-5 h-5 text-gray-600 hover:text-blue-600" />
+          </button>
+          <button 
+            onClick={() => setActiveView("messages")}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            title="Messages"
+          >
+            <MailIcon className="w-5 h-5 text-gray-600 hover:text-blue-600" />
           </button>
           <button 
             onClick={() => setActiveView("notifications")}
@@ -178,6 +188,7 @@ export default function Dashboard() {
             {[
               { label: "Feed", key: "feed" },
               { label: "Search", key: "search" },
+              { label: "Messages", key: "messages" },
               { label: "My Profile", key: "profile" },
               { label: "Connections", key: "connections" },
               { label: "Projects", key: "projects" },
