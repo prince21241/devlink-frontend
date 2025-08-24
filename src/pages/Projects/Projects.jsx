@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import API from "../../api/axios";
 import ProjectForm from "./ProjectForm";
-import { buildImageURL } from "../../utils/imageUtils";
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
@@ -177,7 +176,7 @@ function ProjectCard({ project, onEdit, onDelete }) {
       {project.projectImage && (
         <div className="h-48 overflow-hidden">
           <img
-            src={buildImageURL(project.projectImage)}
+            src={project.projectImage}
             alt={project.title}
             className="w-full h-full object-cover"
           />
